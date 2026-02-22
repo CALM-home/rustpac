@@ -12,6 +12,7 @@ pub struct Player {
     pub pos: Vec2,
     pub vel: Vec2,
     pub size: f32,
+    pub on_ground: bool,
 }
 
 impl Player {
@@ -20,12 +21,30 @@ impl Player {
             pos: vec2(x, y),
             vel: vec2(0.0, 0.0),
             size: PLAYER_SIZE,
+            on_ground: false,
         }
     }
 
+    /// Land on a platform at specific Y position
+    pub fn land(&mut self, y_position: f32) {
+        self.pos.y = y_position;
+        self.vel.y = 0.0;
+        self.on_ground = true;
+    }
+
+    /// Reset ground state (call before collision checks each frame)
+    pub fn reset_ground_state(&mut self) {
+        self.on_ground = false;
+    }
+
     pub fn update(&mut self) {
-        // Gravité
-        self.vel.y += GRAVITY;
+        // Reset ground state - will be set by collision if needed
+        self.reset_ground_state();
+
+        // Gravité (only if not on ground)
+        if !self.on_ground {
+            self.vel.y += GRAVITY;
+        }
 
         // Contrôles - accélération progressive pour plus d'inertie
         if is_key_down(KeyCode::Left) || is_key_down(KeyCode::A) {
@@ -64,10 +83,7 @@ impl Player {
             self.pos.y = 0.0;
             self.vel.y = 0.0;
         }
-        if self.pos.y + self.size > screen_h {
-            self.pos.y = screen_h - self.size;
-            self.vel.y = 0.0;
-        }
+        // Bottom limit removed - platforms handle landing now
     }
 
     pub fn draw(&self) {
