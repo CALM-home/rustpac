@@ -215,24 +215,40 @@ impl Rocket {
     /// Get next module type that should be picked up (same as placement order)
     pub fn get_next_module_type(&self) -> Option<ModuleType> {
         // Must collect bottom first, then middle, then top
+        // Falling modules count as "in progress" so they're not picked up again
         if !self.modules.iter().any(|m| m.module_type == ModuleType::Bottom && 
-            (matches!(m.state, ModuleState::Placed { .. }) || matches!(m.state, ModuleState::Carried))) {
+            (matches!(m.state, ModuleState::Placed { .. }) || matches!(m.state, ModuleState::Carried) || matches!(m.state, ModuleState::Falling { .. }))) {
             return Some(ModuleType::Bottom);
         }
         if !self.modules.iter().any(|m| m.module_type == ModuleType::Middle && 
-            (matches!(m.state, ModuleState::Placed { .. }) || matches!(m.state, ModuleState::Carried))) {
+            (matches!(m.state, ModuleState::Placed { .. }) || matches!(m.state, ModuleState::Carried) || matches!(m.state, ModuleState::Falling { .. }))) {
             return Some(ModuleType::Middle);
         }
         if !self.modules.iter().any(|m| m.module_type == ModuleType::Top && 
-            (matches!(m.state, ModuleState::Placed { .. }) || matches!(m.state, ModuleState::Carried))) {
+            (matches!(m.state, ModuleState::Placed { .. }) || matches!(m.state, ModuleState::Carried) || matches!(m.state, ModuleState::Falling { .. }))) {
             return Some(ModuleType::Top);
         }
         None
     }
 
-    pub fn get_next_placement_type(&self) -> Option<ModuleType> {
-        // Same logic but only for placed modules
-        self.get_next_module_type()
+    /// Get placement position for a specific module type
+    pub fn get_placement_pos_for_type(&self, module_type: ModuleType) -> Vec2 {
+        self.get_placement_pos(module_type)
+    }
+
+    /// Check if a specific module type can be placed (is it the next one in sequence?)
+    pub fn can_place_type(&self, module_type: ModuleType) -> bool {
+        // Check if all previous modules are placed
+        match module_type {
+            ModuleType::Bottom => true, // Bottom can always be placed first
+            ModuleType::Middle => {
+                self.modules.iter().any(|m| m.module_type == ModuleType::Bottom && matches!(m.state, ModuleState::Placed { .. }))
+            }
+            ModuleType::Top => {
+                self.modules.iter().any(|m| m.module_type == ModuleType::Bottom && matches!(m.state, ModuleState::Placed { .. }))
+                    && self.modules.iter().any(|m| m.module_type == ModuleType::Middle && matches!(m.state, ModuleState::Placed { .. }))
+            }
+        }
     }
 
     /// Check if player is in the assembly column (X alignment with rocket base)
@@ -244,7 +260,7 @@ impl Rocket {
     }
 
     pub fn can_place_at_base(&self, player_pos: Vec2, player_size: f32) -> bool {
-        if let Some(_next_type) = self.get_next_placement_type() {
+        if let Some(_next_type) = self.get_next_module_type() {
             return self.is_in_assembly_column(player_pos, player_size);
         }
         false
@@ -272,10 +288,11 @@ impl Rocket {
             }
         }
 
-        // Draw ghost/outline for next placement position (only if not falling)
+        // Draw ghost/outline for next placement position (only if not falling and not carrying)
         let has_falling = self.modules.iter().any(|m| matches!(m.state, ModuleState::Falling { .. }));
-        if !has_falling {
-            if let Some(next_type) = self.get_next_placement_type() {
+        let has_carried = self.modules.iter().any(|m| matches!(m.state, ModuleState::Carried));
+        if !has_falling && !has_carried {
+            if let Some(next_type) = self.get_next_module_type() {
                 let pos = self.get_placement_pos(next_type);
                 draw_rectangle_lines(pos.x, pos.y, MODULE_SIZE, MODULE_SIZE, 2.0, Color::new(1.0, 1.0, 1.0, 0.3));
             }

@@ -64,8 +64,9 @@ async fn main() {
         // Auto-drop: start falling when player is in assembly column
         if let Some(index) = carried_module_index {
             if rocket.is_in_assembly_column(player.pos, player.size) && !rocket.has_falling_module() {
-                if let Some(next_type) = rocket.get_next_placement_type() {
-                    let target_pos = rocket.get_placement_pos(next_type);
+                let carried_type = rocket.modules[index].module_type;
+                if rocket.can_place_type(carried_type) {
+                    let target_pos = rocket.get_placement_pos_for_type(carried_type);
                     let start_pos = vec2(player.pos.x, player.pos.y - rocket::MODULE_SIZE - 5.0);
                     rocket.modules[index].start_falling(start_pos, target_pos);
                     carried_module_index = None;
