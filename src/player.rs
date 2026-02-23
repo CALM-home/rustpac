@@ -2,11 +2,11 @@ use macroquad::prelude::*;
 
 const PLAYER_SIZE: f32 = 24.0;
 const PLAYER_COLOR: Color = Color::new(0.2, 0.8, 0.3, 1.0); // Vert
-const GRAVITY: f32 = 0.12;        // Gravité faible comme dans Jetpac
-const THRUST: f32 = 0.28;         // Poussée douce mais constante
-const MOVE_ACCEL: f32 = 0.15;     // Accélération horizontale progressive
-const MAX_SPEED: f32 = 2.5;       // Vitesse max réduite
-const FRICTION: f32 = 0.985;      // Peu de frottement = plus d'inertie
+const GRAVITY: f32 = 0.10;        // Gravité très faible
+const THRUST: f32 = 0.22;         // Poussée plus douce
+const MOVE_ACCEL: f32 = 0.08;     // Accélération très progressive
+const MAX_SPEED: f32 = 2.0;       // Vitesse max encore réduite
+const FRICTION: f32 = 0.992;      // Presque pas de frottement = glisse beaucoup
 
 pub struct Player {
     pub pos: Vec2,
