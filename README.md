@@ -78,11 +78,6 @@ Together, we code, debug, and iterate through each feature. The AI assistant han
 - [ ] Simple movement patterns
 - [ ] Collision = lose a life
 
-### 🚧 STEP 6 — Aliens 👾
-- [ ] Enemies spawning from screen edges
-- [ ] Simple movement patterns
-- [ ] Collision = lose a life
-
 ### 🚧 STEP 7 — Shooting System
 - [ ] Laser to destroy aliens
 - [ ] Score increases
