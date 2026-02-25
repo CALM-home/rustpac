@@ -67,11 +67,16 @@ Together, we code, debug, and iterate through each feature. The AI assistant han
 - [x] Same falling mechanics as modules
 - [x] UI gauge (fuel + capsule counter)
 
-### 🚧 STEP 5 — Launch and Levels
-- [ ] Launch animation when fuel is full
-- [ ] Player must board the rocket to leave
-- [ ] Transition to level 2 (harder)
-- [ ] Game loop: assemble → fuel → launch → repeat
+### ✅ STEP 5 — Launch and Levels
+- [x] Launch animation when fuel is full
+- [x] Player must board the rocket to leave
+- [x] Transition to level 2 (harder)
+- [x] Game loop: assemble → fuel → launch → repeat
+
+### 🚧 STEP 6 — Aliens 👾
+- [ ] Enemies spawning from screen edges
+- [ ] Simple movement patterns
+- [ ] Collision = lose a life
 
 ### 🚧 STEP 6 — Aliens 👾
 - [ ] Enemies spawning from screen edges
